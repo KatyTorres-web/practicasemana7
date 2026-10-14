@@ -1,4 +1,5 @@
 import { useState, memo, Profiler } from "react";
+import SpiritCollection from "./components/SpiritCollection";
 
 const SpiritCard = memo(function SpiritCard({ crystals }) {
   return (
@@ -125,6 +126,8 @@ function App() {
           </div>
         </aside>
       </section>
+
+      <SpiritCollection />
 
       <footer className="footer">
         <span>COZY QUEST</span>
