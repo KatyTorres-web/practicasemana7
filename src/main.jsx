@@ -1,10 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode, Profiler } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
 
-createRoot(document.getElementById('root')).render(
+function handleRender() {
+  // Las métricas se analizarán con React DevTools Profiler.
+  // No usamos console.log para medir rendimiento.
+}
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <Profiler id="CozyQuest" onRender={handleRender}>
+      <App />
+    </Profiler>
   </StrictMode>,
-)
+);

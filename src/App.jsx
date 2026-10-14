@@ -1,122 +1,137 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, memo, Profiler } from "react";
+
+const SpiritCard = memo(function SpiritCard({ crystals }) {
+  return (
+    <article className="spirit-card">
+      <div className="spirit-art">🧚🏻‍♀️</div>
+      <span className="eyebrow">ESPÍRITU DEL JARDÍN</span>
+      <h2>Lumi, la guardiana</h2>
+      <p>Los cristales que has reunido iluminan su pequeño mundo mágico.</p>
+      <div className="crystal-badge">💎 {crystals} cristales reunidos</div>
+    </article>
+  );
+});
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [crystals, setCrystals] = useState(0);
+  const [ambience, setAmbience] = useState(false);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <main className={`game ${ambience ? "night" : ""}`}>
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand-icon">✦</span>
+          <span>cozy quest</span>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+        <span className="chapter">CAPÍTULO 01 · EL JARDÍN</span>
+      </header>
+
+      <section className="hero">
+        <span className="eyebrow">TU PEQUEÑO MUNDO MÁGICO</span>
+        <h1>
+          Un jardín lleno
+          <br />
+          de <em>maravillas.</em>
+        </h1>
+        <p>
+          Reúne cristales, despierta a los espíritus y descubre la magia que te
+          rodea.
+        </p>
       </section>
 
-      <div className="ticks"></div>
+      <section className="game-layout">
+        <div className="garden-panel">
+          <div className="panel-heading">
+            <div>
+              <span className="eyebrow">ZONA DE EXPLORACIÓN</span>
+              <h2>Claro de las luciérnagas</h2>
+            </div>
+            <span className="weather">☀️ Soleado</span>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="garden-scene">
+            <span className="cloud cloud-one">☁️</span>
+            <span className="cloud cloud-two">☁️</span>
+            <span className="sparkle sparkle-one">✦</span>
+            <span className="sparkle sparkle-two">✧</span>
+            <span className="tree tree-one">🌳</span>
+            <span className="tree tree-two">🌲</span>
+            <span className="flower flower-one">🌼</span>
+            <span className="flower flower-two">🌷</span>
+            <span className="flower flower-three">🍄</span>
+
+            <button
+              className="crystal crystal-one"
+              onClick={() => setCrystals((c) => c + 1)}
+              aria-label="Recolectar cristal azul"
+              title="Recolectar cristal azul"
+            >
+              💎
+            </button>
+            <button
+              className="crystal crystal-two"
+              onClick={() => setCrystals((c) => c + 1)}
+              aria-label="Recolectar cristal violeta"
+              title="Recolectar cristal violeta"
+            >
+              🔮
+            </button>
+
+            <div className="scene-caption">
+              <span>✦</span> Explora y recolecta tesoros
+            </div>
+          </div>
+
+          <div className="action-row">
+            <div className="resource">
+              <span className="resource-icon">💎</span>
+              <div>
+                <strong>{crystals}</strong>
+                <small>Cristales</small>
+              </div>
+            </div>
+
+            <button
+              className="primary-button"
+              onClick={() => setCrystals((c) => c + 1)}
+            >
+              + Recolectar cristal
+            </button>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
+
+        <aside className="side-panel">
+          <Profiler id="SpiritCard" onRender={() => {}}>
+            <SpiritCard crystals={crystals} />
+          </Profiler>
+
+          <div className="experiment-card">
+            <span className="eyebrow">LABORATORIO REACT</span>
+            <h3>Prueba el renderizado</h3>
+            <p>
+              Cambia el ambiente. El componente de Lumi está optimizado con{" "}
+              <code>memo</code>.
+            </p>
+            <button
+              className="secondary-button"
+              onClick={() => setAmbience((value) => !value)}
+            >
+              {ambience ? "☀️ Volver al día" : "🌙 Cambiar ambiente"}
+            </button>
+            <div className="status-line">
+              <span className="status-dot" />
+              Estado local: {ambience ? "Noche mágica" : "Día luminoso"}
+            </div>
+          </div>
+        </aside>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <footer className="footer">
+        <span>COZY QUEST</span>
+        <span>Una aventura construida con React ✦</span>
+      </footer>
+    </main>
+  );
 }
 
-export default App
+export default App;
