@@ -1,6 +1,7 @@
 import { StrictMode, Profiler } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 import "./index.css";
 
 function handleRender() {
@@ -10,8 +11,10 @@ function handleRender() {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Profiler id="CozyQuest" onRender={handleRender}>
-      <App />
-    </Profiler>
+    <ThemeProvider>
+      <Profiler id="CozyQuest" onRender={handleRender}>
+        <App />
+      </Profiler>
+    </ThemeProvider>
   </StrictMode>,
 );

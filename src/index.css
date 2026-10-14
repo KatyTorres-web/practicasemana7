@@ -558,3 +558,22 @@ button {
     height: 105px;
   }
 }
+
+.collection-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.theme-button {
+  width: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .collection-tools {
+    justify-content: flex-start;
+  }
+}

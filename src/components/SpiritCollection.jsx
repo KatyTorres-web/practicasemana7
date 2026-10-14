@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useFetch from "../hooks/useFetch";
+import { useTheme } from "../context/ThemeContext.jsx";
 
 //API URL para obtener los primeros 12 Pokémon de la PokeAPI
 const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=12";
@@ -7,6 +8,7 @@ const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=12";
 function SpiritCollection() {
   const [retry, setRetry] = useState(0);
   const [discovered, setDiscovered] = useState([]);
+  const { isNight, toggleTheme } = useTheme();
 
   const requestUrl = retry === 0 ? API_URL : `${API_URL}&retry=${retry}`;
 
@@ -56,9 +58,18 @@ function SpiritCollection() {
           <h2>Espíritus por descubrir</h2>
           <p>Explora las criaturas que han aparecido en tu mundo.</p>
         </div>
-        <span className="collection-count">
-          ✨ {discovered.length} descubiertos
-        </span>
+        <div className="collection-tools">
+          <span className="collection-count">
+            ✨ {discovered.length} descubiertos
+          </span>
+
+          <button
+            className="secondary-button theme-button"
+            onClick={toggleTheme}
+          >
+            {isNight ? "☀️ Día" : "🌙 Noche"}
+          </button>
+        </div>
       </div>
 
       <div className="spirit-grid">

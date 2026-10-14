@@ -1,5 +1,6 @@
 import { useState, memo, Profiler } from "react";
 import SpiritCollection from "./components/SpiritCollection";
+import { useTheme } from "./context/ThemeContext.jsx";
 
 const SpiritCard = memo(function SpiritCard({ crystals }) {
   return (
@@ -15,10 +16,10 @@ const SpiritCard = memo(function SpiritCard({ crystals }) {
 
 function App() {
   const [crystals, setCrystals] = useState(0);
-  const [ambience, setAmbience] = useState(false);
+  const { isNight, toggleTheme } = useTheme();
 
   return (
-    <main className={`game ${ambience ? "night" : ""}`}>
+    <main className={`game ${isNight ? "night" : ""}`}>
       <header className="topbar">
         <div className="brand">
           <span className="brand-icon">✦</span>
@@ -115,13 +116,13 @@ function App() {
             </p>
             <button
               className="secondary-button"
-              onClick={() => setAmbience((value) => !value)}
+              onClick={toggleTheme}
             >
-              {ambience ? "☀️ Volver al día" : "🌙 Cambiar ambiente"}
+              {isNight ? "☀️ Volver al día" : "🌙 Cambiar ambiente"}
             </button>
             <div className="status-line">
               <span className="status-dot" />
-              Estado local: {ambience ? "Noche mágica" : "Día luminoso"}
+              Estado global: {isNight ? "Noche mágica" : "Día luminoso"}
             </div>
           </div>
         </aside>
