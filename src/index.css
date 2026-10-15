@@ -1039,3 +1039,297 @@ button {
     transition: none;
   }
 }
+
+/* Efecto mágico: portal -> buscador */
+
+.search-box {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  scroll-margin-block: 35vh;
+}
+
+.search-box > span,
+.search-box input,
+.search-box button {
+  position: relative;
+  z-index: 2;
+}
+
+.search-box.magic-focus {
+  border-color: #a5ca7a;
+  animation: magic-search-pulse 1.1s ease-out;
+}
+
+.search-box.magic-focus::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: -70%;
+  bottom: -70%;
+  left: -45%;
+  width: 35%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #d8f7a080 35%,
+    #fffde9 50%,
+    #b6ef8c90 65%,
+    transparent
+  );
+  filter: blur(5px);
+  transform: rotate(18deg);
+  animation: magic-ray-sweep 0.8s ease-out forwards;
+}
+
+.search-box.magic-focus::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    #c9eea52c,
+    transparent
+  );
+  animation: magic-light-flash 1s ease-out;
+}
+
+.search-box.magic-focus input:focus {
+  outline: none;
+}
+
+.night .search-box.magic-focus {
+  box-shadow:
+    0 0 0 3px #b6d99a45,
+    0 0 28px #a8e58a55;
+}
+
+@keyframes magic-ray-sweep {
+  0% {
+    left: -45%;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 125%;
+    opacity: 0;
+  }
+}
+
+@keyframes magic-search-pulse {
+  0% {
+    box-shadow: 0 0 0 0 #b8e68b00;
+  }
+
+  35% {
+    box-shadow:
+      0 0 0 5px #b8e68b55,
+      0 0 25px #b8e68b90;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 #b8e68b00;
+  }
+}
+
+@keyframes magic-light-flash {
+  0% {
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-box.magic-focus {
+    animation: magic-search-pulse 1ms linear;
+    box-shadow: 0 0 0 3px #b8e68b75;
+  }
+
+  .search-box.magic-focus::before,
+  .search-box.magic-focus::after {
+    animation: none;
+  }
+}
+
+/* Celebración de la misión */
+
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  overflow: auto;
+  background: #172b20b8;
+  backdrop-filter: blur(8px);
+  animation: celebration-backdrop 0.35s ease-out;
+}
+
+.celebration-card {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 34px 28px 28px;
+  overflow: hidden;
+  border: 1px solid #d9e7c9;
+  border-radius: 28px;
+  color: #304635;
+  background:
+    radial-gradient(ellipse at 50% 0%, #e2efcf, transparent 48%),
+    #fffdf5;
+  box-shadow: 0 24px 90px #14271d70;
+  text-align: center;
+  animation: celebration-pop 0.55s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.celebration-icon {
+  display: grid;
+  place-items: center;
+  width: 94px;
+  height: 94px;
+  margin: 8px auto 20px;
+  border: 1px solid #e3e9c9;
+  border-radius: 30px;
+  color: #718c5e;
+  background: linear-gradient(145deg, #f7edbc, #d9e8c5);
+  box-shadow: 0 10px 30px #9cac7440;
+  animation: celebration-bounce 1s ease-in-out 0.3s;
+}
+
+.celebration-card > .eyebrow {
+  color: #718c5e;
+}
+
+.celebration-card h2 {
+  margin: 12px 0;
+  font: 700 clamp(27px, 5vw, 35px)/1.15 'Playfair Display', serif;
+}
+
+.celebration-card > p {
+  max-width: 320px;
+  margin: 0 auto 20px;
+  color: #718071;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.celebration-reward {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e8ce;
+  border-radius: 16px;
+  color: #718c5e;
+  background: #f0f3e4;
+  text-align: left;
+}
+
+.celebration-reward strong,
+.celebration-reward small {
+  display: block;
+}
+
+.celebration-reward strong {
+  color: #304635;
+  font-size: 15px;
+}
+
+.celebration-reward small {
+  margin-top: 4px;
+  color: #718071;
+  font-size: 10px;
+}
+
+.celebration-button {
+  width: 100%;
+  min-height: 46px;
+}
+
+.celebration-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -15px;
+  left: calc(5% + (var(--i) * 5.1%));
+  width: 8px;
+  height: 13px;
+  border-radius: 3px;
+  background: hsl(calc(var(--i) * 23), 42%, 64%);
+  animation: confetti-fall 2.1s ease-in calc(var(--i) * 0.055s) both;
+}
+
+.confetti-piece:nth-child(3n) {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.confetti-piece:nth-child(3n + 1) {
+  transform: rotate(35deg);
+}
+
+@keyframes celebration-backdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes celebration-pop {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes celebration-bounce {
+  0%, 100% { transform: rotate(0) scale(1); }
+  30% { transform: rotate(-12deg) scale(1.12); }
+  60% { transform: rotate(10deg) scale(1.08); }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-15px) rotate(0deg);
+    opacity: 0;
+  }
+  15% { opacity: 1; }
+  100% {
+    transform: translateY(460px) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-overlay,
+  .celebration-card,
+  .celebration-icon,
+  .confetti-piece {
+    animation: none;
+  }
+}

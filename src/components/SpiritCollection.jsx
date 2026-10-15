@@ -1,10 +1,11 @@
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Gem, Trophy } from "lucide-react";
 
 import useFetch from "../hooks/useFetch";
+import useDiscovery from "../hooks/useDiscovery";
 import { useTheme } from "../context/ThemeContext.jsx";
 
 const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=12";
-const QUEST_TARGET = 5;
 
 const SpiritTile = memo(function SpiritTile({
   spirit,
@@ -50,26 +51,35 @@ const SpiritTile = memo(function SpiritTile({
 
 function SpiritCollection() {
   const [retry, setRetry] = useState(0);
-  const [discovered, setDiscovered] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [showOnlyNew, setShowOnlyNew] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const searchRef = useRef(null);
+  const searchBoxRef = useRef(null);
+  const [isSearching, setIsSearching] = useState(false);
   const { isNight, toggleTheme } = useTheme();
+  const {
+    discovered,
+    discoverSpirit,
+    crystals,
+    progress,
+    questCompleted,
+    questTarget,
+    crystalsPerDiscovery,
+  } = useDiscovery();
+
+  useEffect(() => {
+    if (!questCompleted) return undefined;
+
+    const frame = requestAnimationFrame(() => setShowCelebration(true));
+    return () => cancelAnimationFrame(frame);
+  }, [questCompleted]);
 
   const requestUrl = retry === 0 ? API_URL : `${API_URL}&retry=${retry}`;
 
   const { data, loading, error } = useFetch(requestUrl);
-
-  // Referencia estable: actualizamos el estado con una función
-  // para no depender del valor anterior de discovered.
-  const discoverSpirit = useCallback((spirit) => {
-    setDiscovered((current) => {
-      if (current.includes(spirit.id)) return current;
-      return [...current, spirit.id];
-    });
-  }, []);
 
   const types = useMemo(() => {
     if (!data) return [];
@@ -92,23 +102,78 @@ function SpiritCollection() {
     });
   }, [data, search, selectedType, showOnlyNew, discovered]);
 
-  const progress = useMemo(
-    () => Math.min((discovered.length / QUEST_TARGET) * 100, 100),
-    [discovered.length],
-  );
-
-  const crystals = discovered.length * 10;
-  const questCompleted = discovered.length >= QUEST_TARGET;
-
   function resetFilters() {
     setSearch("");
     setSelectedType("all");
     setShowOnlyNew(false);
   }
 
+  function exploreCreatures() {
+    setIsSearching(true);
+
+    searchBoxRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    searchRef.current?.focus({
+      preventScroll: true,
+    });
+  }
+
   if (loading) {
     return (
       <section className="collection-section">
+        {showCelebration && (
+          <div
+            className="celebration-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="celebration-title"
+          >
+            <div className="celebration-card">
+              <div className="celebration-confetti" aria-hidden="true">
+                {Array.from({ length: 18 }, (_, i) => (
+                  <span
+                    key={i}
+                    style={{ "--i": i }}
+                    className="confetti-piece"
+                  />
+                ))}
+              </div>
+
+              <div className="celebration-icon" aria-hidden="true">
+                <Trophy size={48} strokeWidth={1.6} />
+              </div>
+
+              <span className="eyebrow">MISIÓN COMPLETADA</span>
+
+              <h2 id="celebration-title">¡Lo lograste, guardián!</h2>
+
+              <p>
+                Has descubierto cinco criaturas mágicas. El portal celebra tu
+                aventura y el jardín brilla gracias a ti.
+              </p>
+
+              <div className="celebration-reward">
+                <Gem size={30} aria-hidden="true" />
+                <div>
+                  <strong>{crystals} cristales reunidos</strong>
+                  <small>¡Misión completada!</small>
+                </div>
+              </div>
+
+              <button
+                className="primary-button celebration-button"
+                onClick={() => setShowCelebration(false)}
+                autoFocus
+              >
+                ¡Seguir explorando! ✨
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="portal-banner">
           <span className="portal-orb">✦</span>
           <span className="eyebrow">PORTAL MÁGICO</span>
@@ -149,7 +214,7 @@ function SpiritCollection() {
 
           <button
             className="portal-button"
-            onClick={() => searchRef.current?.focus()}
+            onClick={exploreCreatures}
           >
             Explorar criaturas <span>↗</span>
           </button>
@@ -184,11 +249,11 @@ function SpiritCollection() {
             <p>
               {questCompleted
                 ? "Has completado la misión y ganado 50 cristales."
-                : "Descubre 5 criaturas para completar la misión."}
+                : `Descubre ${questTarget} criaturas para completar la misión.`}
             </p>
           </div>
           <strong className="quest-count">
-            {Math.min(discovered.length, QUEST_TARGET)}/{QUEST_TARGET}
+            {Math.min(discovered.length, questTarget)}/{questTarget}
           </strong>
         </div>
 
@@ -196,9 +261,9 @@ function SpiritCollection() {
           className="quest-progress-track"
           role="progressbar"
           aria-label="Progreso de la misión"
-          aria-valuenow={Math.min(discovered.length, QUEST_TARGET)}
+          aria-valuenow={Math.min(discovered.length, questTarget)}
           aria-valuemin={0}
-          aria-valuemax={QUEST_TARGET}
+          aria-valuemax={questTarget}
         >
           <div
             className="quest-progress-fill"
@@ -210,7 +275,7 @@ function SpiritCollection() {
           <span>
             {questCompleted
               ? "✦ Misión completada"
-              : "Recompensa por criatura: +10 cristales"}
+              : `Recompensa por criatura: +${crystalsPerDiscovery} cristales`}
           </span>
           <span>{Math.round(progress)}%</span>
         </div>
@@ -237,7 +302,15 @@ function SpiritCollection() {
       </div>
 
       <div className="collection-controls">
-        <div className="search-box">
+        <div
+          ref={searchBoxRef}
+          className={`search-box ${isSearching ? "magic-focus" : ""}`}
+          onAnimationEnd={(event) => {
+            if (event.animationName === "magic-search-pulse") {
+              setIsSearching(false);
+            }
+          }}
+        >
           <span aria-hidden="true">⌕</span>
           <input
             ref={searchRef}
